@@ -1,147 +1,107 @@
-// Import React and hooks for state and side effects
-import React, { useState, useEffect } from 'react';
+// Import React and required hooks
+import React, { useEffect, useState } from 'react';
 
-// Import axios for making HTTP requests
+// Axios is used to make HTTP requests
 import axios from 'axios';
 
-// Import a loading spinner component
+// Loading spinner component
 import ReactLoading from 'react-loading';
 
-// Import Bootstrap components for layout and styling
-import { Media, Form, Button, Container, Row, Col } from 'react-bootstrap';
+// Bootstrap components for layout and styling
+import { Card, ListGroup } from 'react-bootstrap'; // Card is imported but not used
 
-// Define a functional component called GitHub
 function GitHub() {
-
-  // State to store GitHub users retrieved from API
+  // State to store fetched GitHub users
   const [data, setData] = useState([]);
 
-  // State to store the search input value
+  // State to store search input value
   const [searchTerm, setSearchTerm] = useState("");
 
-  // State to track whether data is loading
+  // State to control loading spinner
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect runs when component mounts (empty dependency array [])
-  // Calls getData once at the start
+  // useEffect runs once when the component mounts
   useEffect(() => {
     getData();
-  }, []);
+  }, []); // Empty dependency array means it runs only once
 
-  // Function to fetch data from GitHub API
+  // Fetch GitHub users from the API
   const getData = async () => {
-    try {
-      // Make GET request to GitHub users search API
-      const res = await axios.get(`https://api.github.com/search/users?q=${searchTerm}`);
-      
-      // Store the array of user objects in state
-      setData(res.data.items);
+    const res = await axios.get(
+      `https://api.github.com/search/users?q=${searchTerm || 'greg'}`
+    );
 
-      // Stop loading spinner
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setIsLoading(false);
-    }
+    // Update state with API response
+    setData(res.data.items);
+
+    // Stop loading animation
+    setIsLoading(false);
   };
 
-  // Function to handle form submission
+  // Handle form submission
   const handleSubmit = event => {
     event.preventDefault(); // Prevent page reload
     setIsLoading(true);     // Show loading spinner
-    getData();              // Fetch users based on searchTerm
+    getData();              // Fetch new data
   };
 
-  // Map each user object to a Media component for display
-  const listUsers = data.map((user) =>
-    <Media key={user.id} className="mb-3 p-3 border rounded">
-      {/* User avatar linking to their GitHub profile */}
+  // Map over users data and render a list item for each user
+  const listUsers = data.map((user) => (
+    <ListGroup.Item key={user.id} className="d-flex align-items-center">
+      {/* Link to GitHub profile */}
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
           width={64}
           height={64}
-          className="mr-3 rounded"
+          className="me-3 rounded"
           src={user.avatar_url}
           alt={user.login}
         />
       </a>
 
-      {/* Media body contains user information */}
-      <Media.Body>
-        <h5>Login: {user.login}</h5>
+      {/* User information */}
+      <div>
+        <h5 className="mb-1">Login: {user.login}</h5>
         <p className="mb-0">Id: {user.id}</p>
+      </div>
+    </ListGroup.Item>
+  ));
 
-        {/* Link to view the GitHub profile */}
-        <a 
-          href={user.html_url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-decoration-none"
-        >
-          View Profile →
-        </a>
-      </Media.Body>
-    </Media>
-  );
-
-  // JSX returned to render the component
   return (
-    <Container>
-      <Row className="justify-content-center mt-5">
-        <Col md={8}>
-          {/* Page heading */}
-          <h2 className="text-center mb-4">GitHub User Search</h2>
-          
-          {/* Search form */}
-          <Form onSubmit={handleSubmit} className="mb-4">
-            <Form.Group>
-              {/* Input field */}
-              <Form.Control
-                type="text"
-                placeholder="Enter GitHub username..."
-                onChange={event => setSearchTerm(event.target.value)} // Update searchTerm state
-                value={searchTerm}
-                size="lg"
-              />
-            </Form.Group>
+    <div className="container mt-4">
+      {/* Search form */}
+      <form onSubmit={handleSubmit} className="mb-4">
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search GitHub users..."
+            onChange={event => setSearchTerm(event.target.value)}
+            value={searchTerm}
+          />
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </div>
+      </form>
 
-            {/* Submit button */}
-            <Button 
-              variant="primary" 
-              type="submit" 
-              className="w-100 mt-2"
-              size="lg"
-            >
-              Search
-            </Button>
-          </Form>
+      {/* Results heading */}
+      <h3>GitHub Users Results</h3>
 
-          {/* Loading spinner while fetching data */}
-          {isLoading && (
-            <div className="d-flex justify-content-center my-5">
-              <ReactLoading type="spinningBubbles" color="#0d6efd" />
-            </div>
-          )}
+      {/* Show loading spinner while fetching data */}
+      {isLoading && (
+        <div className="d-flex justify-content-center my-4">
+          <ReactLoading type="spinningBubbles" color="#444" />
+        </div>
+      )}
 
-          {/* Show results if not loading and data exists */}
-          {!isLoading && data.length > 0 && (
-            <>
-              <h3 className="mb-3">Search Results ({data.length})</h3>
-              {listUsers}
-            </>
-          )}
-
-          {/* Show message if no users found */}
-          {!isLoading && data.length === 0 && searchTerm && (
-            <div className="alert alert-info">
-              No users found. Try a different search term.
-            </div>
-          )}
-        </Col>
-      </Row>
-    </Container>
+      {/* Display list of users */}
+      <ListGroup>
+        {listUsers}
+      </ListGroup>
+    </div>
   );
 }
 
-// Export the GitHub component so it can be used in App.js
+// Export GitHub component
 export default GitHub;

@@ -1,0 +1,24 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "text": "finishing writing hooks chapter"
+    },
+    {
+      "id": "2",
+      "text": "play with kids"
+    },
+    {
+      "id": "3",
+      "text": "read bible"
+    },
+    {
+      "id": "3d3f5ed4-0eda-4b9d-a5fc-3ed9b9bb826d",
+      "text": "clean room"
+    },
+    {
+      "id": "f9497cff-d130-44bd-ae34-04a07c653770",
+      "text": "clean car"
+    }
+  ]
+}

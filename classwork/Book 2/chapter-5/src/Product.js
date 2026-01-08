@@ -4,50 +4,43 @@ import React from 'react';
 // Import the Rating component to display product ratings
 import Rating from './Rating';
 
-// Import Media component from react-bootstrap for layout (image + content)
-import { Media } from 'react-bootstrap';
+// Import modern layout components from react-bootstrap
+import { Stack, Image } from 'react-bootstrap';
 
 // Define a functional component called Product
-// Receives props from its parent component
 const Product = (props) => {
   return (
     <div>
-      {/* Media component aligns image and content side by side */}
-      <Media>
+      {/* Stack replaces the old Media component */}
+      <Stack direction="horizontal" gap={3}>
 
         {/* Product image */}
-        <img
-          width={64}                    // Set image width
-          height={64}                   // Set image height
-          className="mr-3"              // Add right margin using Bootstrap class
-          src={props.data.imageUrl}     // Image URL from props
-          alt="Image"                   // Alt text for accessibility
+        <Image
+          width={64}
+          height={64}
+          className="me-3"
+          src={props.data.imageUrl}
+          alt={props.data.productName}
         />
 
-        {/* Media body contains product details */}
-        <Media.Body>
-
-          {/* Display product name */}
+        {/* Product details */}
+        <div>
           <h5>{props.data.productName}</h5>
 
-          {/* Display product release date */}
           {props.data.releasedDate}
 
-          {/* Render the Rating component */}
-          {/* Pass rating value and number of reviews from props */}
           <Rating
             rating={props.data.rating}
             numOfReviews={props.data.numOfReviews}
           />
 
-          {/* Display product description */}
           <p>{props.data.description}</p>
+        </div>
 
-        </Media.Body>
-      </Media>
+      </Stack>
     </div>
   );
 };
 
-// Export the Product component so it can be used in other files
+// Export the Product component
 export default Product;
